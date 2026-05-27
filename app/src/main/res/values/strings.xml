@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Diary Lite</string>
+    <string name="home_title">Diary Lite</string>
+    <string name="today_diary">오늘 일기 쓰기</string>
+    <string name="recent_entries">최근 일기</string>
+    <string name="view_all">전체 보기</string>
+    <string name="all_entries">전체 일기</string>
+    <string name="calendar">달력</string>
+    <string name="search">검색</string>
+    <string name="settings">설정</string>
+    <string name="add_entry">일기 쓰기</string>
+    <string name="edit_entry">일기 수정</string>
+    <string name="entry_detail">일기 상세</string>
+    <string name="save">저장</string>
+    <string name="cancel">취소</string>
+    <string name="delete">삭제</string>
+    <string name="edit">수정</string>
+    <string name="confirm">확인</string>
+    <string name="back">뒤로</string>
+    <string name="previous_month">이전 달</string>
+    <string name="next_month">다음 달</string>
+    <string name="go_today">오늘</string>
+    <string name="title_label">제목</string>
+    <string name="title_optional_hint">제목을 입력하세요</string>
+    <string name="content_label">내용</string>
+    <string name="content_hint">오늘의 생각을 적어보세요</string>
+    <string name="date_label">날짜</string>
+    <string name="time_label">시간</string>
+    <string name="time_hint">HH:mm</string>
+    <string name="clear_time">시간 지우기</string>
+    <string name="mood_label">기분</string>
+    <string name="mood_none">선택 안 함</string>
+    <string name="untitled">제목 없음</string>
+    <string name="empty_home">아직 작성한 일기가 없습니다.</string>
+    <string name="empty_entries">저장된 일기가 없습니다.</string>
+    <string name="empty_date_entries">이 날짜에는 일기가 없습니다.</string>
+    <string name="empty_search">검색어를 입력하면 일기를 찾을 수 있습니다.</string>
+    <string name="empty_search_results">검색 결과가 없습니다.</string>
+    <string name="loading_entry">일기를 불러오는 중입니다.</string>
+    <string name="entry_not_found">일기를 찾을 수 없습니다.</string>
+    <string name="save_failed">일기를 저장하지 못했습니다.</string>
+    <string name="delete_failed">일기를 삭제하지 못했습니다.</string>
+    <string name="search_failed">검색 중 문제가 발생했습니다.</string>
+    <string name="export_failed">내보내기에 실패했습니다.</string>
+    <string name="export_success">일기를 내보냈습니다.</string>
+    <string name="file_creation_canceled">파일 생성이 취소되었습니다.</string>
+    <string name="content_required">내용을 입력해야 저장할 수 있습니다.</string>
+    <string name="invalid_date">날짜 형식이 올바르지 않습니다.</string>
+    <string name="invalid_time">시간 형식이 올바르지 않습니다.</string>
+    <string name="delete_dialog_title">일기를 삭제할까요?</string>
+    <string name="delete_dialog_message">삭제한 일기는 되돌릴 수 없습니다.</string>
+    <string name="unsaved_dialog_title">저장하지 않고 나갈까요?</string>
+    <string name="unsaved_dialog_message">작성 중인 내용이 사라집니다.</string>
+    <string name="privacy_title">개인정보 보호</string>
+    <string name="privacy_line_one">이 앱은 일기 데이터를 기본적으로 기기에만 저장합니다.</string>
+    <string name="privacy_line_two">서버 동기화, 광고, 분석 기능은 사용하지 않습니다.</string>
+    <string name="app_info_title">앱 정보</string>
+    <string name="app_info_body">개인 기록을 위한 로컬 우선 일기 앱입니다.</string>
+    <string name="markdown_export">Markdown 내보내기</string>
+    <string name="export_all_entries">모든 일기 내보내기</string>
+    <string name="export_description">기기에 저장된 모든 일기를 Markdown 파일로 저장합니다.</string>
+    <string name="write_selected_date">선택한 날짜에 쓰기</string>
+    <string name="export_title">Diary Lite 내보내기</string>
+    <string name="exported_at_label">내보낸 시각</string>
+    <string name="export_time_label">시간</string>
+    <string name="export_mood_label">기분</string>
+    <string name="search_hint">제목 또는 내용 검색</string>
+    <string name="content_description_edit">일기 수정</string>
+    <string name="content_description_delete">일기 삭제</string>
+    <string name="content_description_calendar">달력 열기</string>
+    <string name="content_description_search">검색 열기</string>
+    <string name="content_description_settings">설정 열기</string>
+    <string name="mood_happy">기쁨</string>
+    <string name="mood_calm">평온</string>
+    <string name="mood_normal">보통</string>
+    <string name="mood_tired">피곤</string>
+    <string name="mood_sad">슬픔</string>
+    <string name="mood_angry">화남</string>
+    <string name="mood_anxious">불안</string>
+    <string name="mood_excited">설렘</string>
+    <string name="mood_grateful">감사</string>
+    <string-array name="calendar_weekdays">
+        <item>일</item>
+        <item>월</item>
+        <item>화</item>
+        <item>수</item>
+        <item>목</item>
+        <item>금</item>
+        <item>토</item>
+    </string-array>
+</resources>

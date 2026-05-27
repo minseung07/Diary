@@ -1,0 +1,45 @@
+# Gradle / Android build output
+.gradle/
+.gradle-home/
+**/build/
+
+# Kotlin / compiler local state
+.kotlin/
+
+# Android local SDK and generated config
+local.properties
+.android-home/
+
+# IDE and editor local files
+.idea/
+*.iml
+.vscode/
+
+# Generated binaries and packaged artifacts
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Signing material and local keystores
+*.jks
+*.keystore
+*.p12
+*.pem
+*.key
+
+# Logs and JVM crash dumps
+*.log
+hs_err_pid*
+replay_pid*
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Codex / local agent workspace files
+.codex/
+.agents/
+
+# User-created diary exports
+diary_export_*.md
