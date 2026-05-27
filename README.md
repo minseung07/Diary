@@ -73,3 +73,7 @@ ANDROID_SDK_ROOT=/path/to/android/sdk \
 ```
 
 실제 기기나 에뮬레이터가 없는 환경에서는 `connectedAndroidTest`를 건너뛰고 단위 테스트, 린트, 디버그 빌드 결과로 검증합니다.
+
+## 라이선스
+
+이 프로젝트는 MIT License로 배포됩니다. 자세한 내용은 [LICENSE](LICENSE)를 확인하세요.
