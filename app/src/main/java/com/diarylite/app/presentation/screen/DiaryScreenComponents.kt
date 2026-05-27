@@ -447,7 +447,7 @@ internal fun CalendarDayCell(
                 Text(
                     text = date.dayOfMonth.toString(),
                     style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = if (isSelected || isToday || hasEntry) FontWeight.SemiBold else FontWeight.Normal,
+                    fontWeight = if (isSelected || isToday) FontWeight.SemiBold else FontWeight.Normal,
                 )
             }
         }
