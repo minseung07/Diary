@@ -1,6 +1,6 @@
 package com.diarylite.app.domain.repository
 
-import com.diarylite.app.data.local.dao.EntryDateCount
+import com.diarylite.app.domain.model.DiaryDateCount
 import com.diarylite.app.domain.model.DiaryEntry
 import com.diarylite.app.domain.model.Mood
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +10,7 @@ interface DiaryRepository {
     fun observeRecentEntries(limit: Int): Flow<List<DiaryEntry>>
     fun observeEntry(id: Long): Flow<DiaryEntry?>
     fun observeEntriesByDate(entryDateEpochDay: Long): Flow<List<DiaryEntry>>
-    fun observeEntryCountsInRange(startEpochDay: Long, endEpochDay: Long): Flow<List<EntryDateCount>>
+    fun observeEntryCountsInRange(startEpochDay: Long, endEpochDay: Long): Flow<List<DiaryDateCount>>
     fun searchEntries(trimmedEscapedLikeQuery: String): Flow<List<DiaryEntry>>
     fun observeActiveMoods(): Flow<List<Mood>>
 

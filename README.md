@@ -20,6 +20,17 @@ Diary Lite는 개인 일기를 빠르게 쓰고 로컬에서 관리하기 위한
 
 Android SDK 경로가 자동으로 잡히지 않으면 `ANDROID_HOME` 또는 `ANDROID_SDK_ROOT`를 설정합니다.
 
+## 실행
+
+Android Studio에서 프로젝트를 연 뒤 `app` 구성을 선택하고 연결된 Android 기기 또는 에뮬레이터에서 실행합니다.
+
+터미널에서는 디버그 APK를 빌드한 뒤 연결된 기기에 설치할 수 있습니다.
+
+```bash
+./gradlew assembleDebug
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+```
+
 ## 빌드와 검증
 
 ```bash
@@ -36,3 +47,5 @@ ANDROID_HOME=/path/to/android/sdk \
 ANDROID_SDK_ROOT=/path/to/android/sdk \
 ./gradlew testDebugUnitTest
 ```
+
+실제 기기나 에뮬레이터가 없는 환경에서는 `connectedAndroidTest`를 건너뛰고 단위 테스트, 린트, 디버그 빌드 결과로 검증합니다.

@@ -5,6 +5,9 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.diarylite.app.domain.model.DiaryEntry
 
+private const val MIN_ENTRY_TIME_MINUTE = 0
+private const val MAX_ENTRY_TIME_MINUTE = 1_439
+
 @Entity(
     tableName = "diary_entries",
     indices = [
@@ -22,7 +25,16 @@ data class DiaryEntryEntity(
     val moodCode: String?,
     val createdAt: Long,
     val updatedAt: Long,
-)
+) {
+    init {
+        require(
+            entryTimeMinute == null ||
+                entryTimeMinute in MIN_ENTRY_TIME_MINUTE..MAX_ENTRY_TIME_MINUTE,
+        ) {
+            "entryTimeMinute must be null or between 0 and 1439."
+        }
+    }
+}
 
 fun DiaryEntryEntity.toDomain(): DiaryEntry = DiaryEntry(
     id = id,

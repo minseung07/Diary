@@ -5,13 +5,13 @@ package com.diarylite.app.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.diarylite.app.data.local.dao.EntryDateCount
+import com.diarylite.app.domain.model.DiaryDateCount
 import com.diarylite.app.domain.model.DiaryEntry
-import com.diarylite.app.domain.model.Mood
 import com.diarylite.app.domain.repository.DiaryRepository
 import com.diarylite.app.util.MarkdownExportLabels
 import com.diarylite.app.util.MarkdownExporter
 import com.diarylite.app.util.toEscapedLikeQueryOrNull
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,19 +19,29 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.time.LocalDate
-import java.time.LocalTime
 import java.time.YearMonth
 
 data class EditorResult(
     val success: Boolean,
     val entryId: Long? = null,
 )
+
+data class ExportUiState(
+    val inProgress: Boolean = false,
+)
+
+enum class MarkdownExportResult {
+    Success,
+    Failed,
+    AlreadyInProgress,
+}
 
 class DiaryViewModel(
     private val repository: DiaryRepository,
@@ -42,7 +52,7 @@ class DiaryViewModel(
     val allEntries: StateFlow<List<DiaryEntry>> = repository.observeAllEntries()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    val moods: StateFlow<List<Mood>> = repository.observeActiveMoods()
+    val activeMoods = repository.observeActiveMoods()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     private val _searchQuery = MutableStateFlow("")
@@ -50,6 +60,9 @@ class DiaryViewModel(
 
     private val _searchErrorEvents = MutableSharedFlow<Unit>()
     val searchErrorEvents: SharedFlow<Unit> = _searchErrorEvents.asSharedFlow()
+
+    private val _exportUiState = MutableStateFlow(ExportUiState())
+    val exportUiState: StateFlow<ExportUiState> = _exportUiState.asStateFlow()
 
     val searchResults: StateFlow<List<DiaryEntry>> = _searchQuery
         .map { it.toEscapedLikeQueryOrNull() }
@@ -72,7 +85,7 @@ class DiaryViewModel(
     private val _selectedDate = MutableStateFlow(LocalDate.now())
     val selectedDate: StateFlow<LocalDate> = _selectedDate
 
-    val monthEntryCounts: StateFlow<List<EntryDateCount>> = _visibleMonth
+    val monthEntryCounts: StateFlow<List<DiaryDateCount>> = _visibleMonth
         .flatMapLatest { month ->
             repository.observeEntryCountsInRange(
                 startEpochDay = month.atDay(1).toEpochDay(),
@@ -86,6 +99,8 @@ class DiaryViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
     fun observeEntry(id: Long): Flow<DiaryEntry?> = repository.observeEntry(id)
+
+    suspend fun getEntryForEditor(id: Long): DiaryEntry? = repository.getEntry(id)
 
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
@@ -122,14 +137,14 @@ class DiaryViewModel(
         title: String?,
         content: String,
         date: LocalDate,
-        time: LocalTime?,
+        entryTimeMinute: Int?,
         moodCode: String?,
     ): EditorResult = runCatching {
         val id = repository.createEntry(
             title = title,
             content = content,
             entryDateEpochDay = date.toEpochDay(),
-            entryTimeMinute = time?.let { it.hour * 60 + it.minute },
+            entryTimeMinute = entryTimeMinute,
             moodCode = moodCode,
         )
         EditorResult(success = true, entryId = id)
@@ -142,7 +157,7 @@ class DiaryViewModel(
         title: String?,
         content: String,
         date: LocalDate,
-        time: LocalTime?,
+        entryTimeMinute: Int?,
         moodCode: String?,
     ): EditorResult {
         val existing = repository.getEntry(entryId) ?: return EditorResult(success = false)
@@ -151,7 +166,7 @@ class DiaryViewModel(
                 title = title,
                 content = content,
                 entryDateEpochDay = date.toEpochDay(),
-                entryTimeMinute = time?.let { it.hour * 60 + it.minute },
+                entryTimeMinute = entryTimeMinute,
                 moodCode = moodCode,
             )
             EditorResult(success = repository.updateEntry(updated), entryId = entryId)
@@ -164,16 +179,32 @@ class DiaryViewModel(
         repository.deleteEntry(entryId)
     }.getOrDefault(false)
 
-    suspend fun buildMarkdownExport(
+    suspend fun exportMarkdown(
         labels: MarkdownExportLabels,
         moodLabel: (String) -> String,
-    ): String {
-        val entries = repository.getEntriesForExport()
-        return MarkdownExporter.export(
-            entries = entries,
-            labels = labels,
-            moodLabel = moodLabel,
-        )
+        writeMarkdown: suspend (String) -> Unit,
+    ): MarkdownExportResult {
+        if (_exportUiState.value.inProgress) {
+            return MarkdownExportResult.AlreadyInProgress
+        }
+
+        _exportUiState.value = ExportUiState(inProgress = true)
+        return try {
+            val entries = repository.getEntriesForExport()
+            val markdown = MarkdownExporter.export(
+                entries = entries,
+                labels = labels,
+                moodLabel = moodLabel,
+            )
+            writeMarkdown(markdown)
+            MarkdownExportResult.Success
+        } catch (exception: CancellationException) {
+            throw exception
+        } catch (_: Exception) {
+            MarkdownExportResult.Failed
+        } finally {
+            _exportUiState.value = ExportUiState(inProgress = false)
+        }
     }
 }
 

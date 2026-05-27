@@ -13,3 +13,5 @@ fun defaultMoodEntities(): List<MoodEntity> = listOf(
     MoodEntity(code = "excited", sortOrder = 80, isActive = true),
     MoodEntity(code = "grateful", sortOrder = 90, isActive = true),
 )
+
+fun defaultMoodCodes(): Set<String> = defaultMoodEntities().mapTo(linkedSetOf()) { it.code }

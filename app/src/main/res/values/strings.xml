@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Diary Lite</string>
     <string name="home_title">Diary Lite</string>
     <string name="today_diary">오늘 일기 쓰기</string>
+    <string name="home_today_card_title">오늘의 기록을 남겨보세요</string>
+    <string name="home_today_card_subtitle">짧게 적어도 괜찮습니다. 지금 떠오른 생각을 바로 저장하세요.</string>
     <string name="recent_entries">최근 일기</string>
     <string name="view_all">전체 보기</string>
     <string name="all_entries">전체 일기</string>
@@ -13,23 +15,29 @@
     <string name="edit_entry">일기 수정</string>
     <string name="entry_detail">일기 상세</string>
     <string name="save">저장</string>
+    <string name="save_in_progress">저장 중입니다.</string>
     <string name="cancel">취소</string>
     <string name="delete">삭제</string>
-    <string name="edit">수정</string>
     <string name="confirm">확인</string>
     <string name="back">뒤로</string>
     <string name="previous_month">이전 달</string>
     <string name="next_month">다음 달</string>
     <string name="go_today">오늘</string>
+    <string name="date_full_format">%1$d년 %2$d월 %3$d일 %4$s</string>
+    <string name="date_month_short_format">%1$d월</string>
+    <string name="month_year_format">%1$d년 %2$d월</string>
+    <string name="entry_count_format">일기 %1$d개</string>
     <string name="title_label">제목</string>
     <string name="title_optional_hint">제목을 입력하세요</string>
     <string name="content_label">내용</string>
     <string name="content_hint">오늘의 생각을 적어보세요</string>
     <string name="date_label">날짜</string>
+    <string name="date_format_hint" tools:ignore="TypographyDashes">예: 2026-05-27</string>
+    <string name="select_date">날짜 선택</string>
     <string name="time_label">시간</string>
     <string name="time_hint">HH:mm</string>
+    <string name="time_format_hint">예: 09:30, 비우면 시간 없음</string>
     <string name="clear_time">시간 지우기</string>
-    <string name="mood_label">기분</string>
     <string name="mood_none">선택 안 함</string>
     <string name="untitled">제목 없음</string>
     <string name="empty_home">아직 작성한 일기가 없습니다.</string>
@@ -44,6 +52,7 @@
     <string name="search_failed">검색 중 문제가 발생했습니다.</string>
     <string name="export_failed">내보내기에 실패했습니다.</string>
     <string name="export_success">일기를 내보냈습니다.</string>
+    <string name="export_in_progress">내보내는 중입니다.</string>
     <string name="file_creation_canceled">파일 생성이 취소되었습니다.</string>
     <string name="content_required">내용을 입력해야 저장할 수 있습니다.</string>
     <string name="invalid_date">날짜 형식이 올바르지 않습니다.</string>
@@ -68,9 +77,19 @@
     <string name="search_hint">제목 또는 내용 검색</string>
     <string name="content_description_edit">일기 수정</string>
     <string name="content_description_delete">일기 삭제</string>
-    <string name="content_description_calendar">달력 열기</string>
-    <string name="content_description_search">검색 열기</string>
-    <string name="content_description_settings">설정 열기</string>
+    <string name="content_description_clear_search">검색어 지우기</string>
+    <string name="detail_content_section">내용</string>
+    <string name="editor_metadata_section">작성 날짜</string>
+    <string name="editor_writing_section">일기 내용</string>
+    <string name="editor_mood_section">기분</string>
+    <string name="search_results_count">검색 결과 %1$d개</string>
+    <string name="home_bottom_nav">홈</string>
+    <string name="entries_bottom_nav">일기</string>
+    <string name="calendar_bottom_nav">달력</string>
+    <string name="search_bottom_nav">검색</string>
+    <string name="settings_bottom_nav">설정</string>
+    <string name="calendar_day_no_entry_description">%1$s, 일기 없음</string>
+    <string name="calendar_day_has_entry_description">%1$s, 일기 있음</string>
     <string name="mood_happy">기쁨</string>
     <string name="mood_calm">평온</string>
     <string name="mood_normal">보통</string>
@@ -88,5 +107,14 @@
         <item>목</item>
         <item>금</item>
         <item>토</item>
+    </string-array>
+    <string-array name="calendar_weekdays_full">
+        <item>일요일</item>
+        <item>월요일</item>
+        <item>화요일</item>
+        <item>수요일</item>
+        <item>목요일</item>
+        <item>금요일</item>
+        <item>토요일</item>
     </string-array>
 </resources>

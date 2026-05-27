@@ -2,7 +2,6 @@ package com.diarylite.app.util
 
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.util.Locale
@@ -10,16 +9,10 @@ import java.util.Locale
 private val koreanLocale: Locale = Locale.KOREAN
 private val dateInputFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 private val timeInputFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm", koreanLocale)
-private val fullDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일 EEEE", koreanLocale)
 private val shortDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd", koreanLocale)
-private val monthFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 M월", koreanLocale)
 private val exportDateFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
-fun LocalDate.formatFullKoreanDate(): String = format(fullDateFormatter)
-
 fun LocalDate.formatShortDate(): String = format(shortDateFormatter)
-
-fun YearMonth.formatKoreanMonth(): String = format(monthFormatter)
 
 fun LocalDate.formatInputDate(): String = format(dateInputFormatter)
 
