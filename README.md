@@ -2,6 +2,8 @@
 
 Diary Lite는 오늘의 일기를 빠르게 쓰고 기기 안에서만 관리하기 위한 Android 일기 앱입니다. 일기 데이터는 기본적으로 로컬 Room 데이터베이스에 저장되며 서버 동기화, 계정, 광고, 분석 기능을 사용하지 않습니다.
 
+<img width="1613" height="1040" alt="image" src="https://github.com/user-attachments/assets/e965a44f-1531-4aa8-a5a9-a049f07f6cf9" />
+
 ## 주요 기능
 
 - 오늘 일기 작성, 수정, 삭제
