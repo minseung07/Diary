@@ -6,30 +6,34 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Mood
 import androidx.compose.material.icons.filled.NoteAlt
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
@@ -49,7 +54,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.diarylite.app.R
@@ -301,49 +305,23 @@ internal fun EmptyMessage(
 }
 
 @Composable
-internal fun QuickActionCard(
-    label: String,
-    icon: ImageVector,
+internal fun WriteTodayFab(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(
-        modifier = modifier,
+    ExtendedFloatingActionButton(
         onClick = onClick,
-        color = MaterialTheme.colorScheme.surface,
-        contentColor = MaterialTheme.colorScheme.onSurface,
-        shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Surface(
-                color = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                shape = MaterialTheme.shapes.small,
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .size(19.dp),
-                )
-            }
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
+        modifier = modifier,
+        icon = {
+            Icon(
+                imageVector = Icons.Default.EditNote,
+                contentDescription = null,
             )
-        }
-    }
+        },
+        text = { Text(stringResource(R.string.write_diary_short)) },
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+    )
 }
 
 @Composable
@@ -429,45 +407,65 @@ internal fun CalendarDayCell(
     } else {
         stringResource(R.string.calendar_day_no_entry_description, fullDateText)
     }
-    val background = when {
-        isSelected -> MaterialTheme.colorScheme.primaryContainer
-        hasEntry && inMonth -> MaterialTheme.colorScheme.tertiaryContainer
-        inMonth -> MaterialTheme.colorScheme.surface
-        else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
+    val dayBackground = when {
+        isSelected -> MaterialTheme.colorScheme.primary
+        hasEntry && inMonth -> MaterialTheme.colorScheme.primaryContainer
+        else -> Color.Transparent
     }
-    val textColor = when {
+    val dayContentColor = when {
         !inMonth -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f)
-        isSelected -> MaterialTheme.colorScheme.onPrimaryContainer
-        hasEntry -> MaterialTheme.colorScheme.onTertiaryContainer
+        isSelected -> MaterialTheme.colorScheme.onPrimary
+        hasEntry && inMonth -> MaterialTheme.colorScheme.onPrimaryContainer
         else -> MaterialTheme.colorScheme.onSurface
     }
-    val borderColor = when {
-        isSelected -> MaterialTheme.colorScheme.primary
-        isToday -> MaterialTheme.colorScheme.tertiary
-        hasEntry && inMonth -> MaterialTheme.colorScheme.tertiary
-        else -> MaterialTheme.colorScheme.outlineVariant
-    }
+    val entryDotColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.primary
 
     Column(
         modifier = modifier
             .aspectRatio(1f)
             .heightIn(min = 48.dp)
-            .padding(3.dp)
-            .clip(MaterialTheme.shapes.small)
-            .background(background)
-            .border(1.dp, borderColor, MaterialTheme.shapes.small)
+            .padding(2.dp)
+            .clip(MaterialTheme.shapes.medium)
             .semantics { contentDescription = dayDescription }
             .clickable(onClick = onClick)
-            .padding(5.dp),
+            .padding(vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        Text(
-            text = date.dayOfMonth.toString(),
-            color = textColor,
-            style = MaterialTheme.typography.bodyMedium,
-            fontWeight = if (isSelected || isToday || hasEntry) FontWeight.SemiBold else FontWeight.Normal,
-        )
+        Surface(
+            modifier = Modifier.size(34.dp),
+            shape = CircleShape,
+            color = dayBackground,
+            contentColor = dayContentColor,
+            border = if (isToday && !isSelected) {
+                BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f))
+            } else {
+                null
+            },
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(
+                    text = date.dayOfMonth.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = if (isSelected || isToday || hasEntry) FontWeight.SemiBold else FontWeight.Normal,
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .height(8.dp)
+                .padding(top = 3.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (hasEntry && inMonth) {
+                Box(
+                    modifier = Modifier
+                        .size(5.dp)
+                        .clip(CircleShape)
+                        .background(entryDotColor),
+                )
+            }
+        }
     }
 }
 

@@ -5,25 +5,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navOptions
 import androidx.navigation.navArgument
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.navOptions
 import com.diarylite.app.R
 import com.diarylite.app.presentation.DiaryViewModel
 import com.diarylite.app.presentation.screen.CalendarScreen
@@ -55,8 +55,8 @@ fun DiaryNavGraph(viewModel: DiaryViewModel) {
                 viewModel = viewModel,
                 onWriteToday = { navController.navigate(DiaryRoute.addEntry()) },
                 onOpenEntries = { navController.navigateTopLevel(DiaryRoute.Entries) },
-                onOpenCalendar = { navController.navigateTopLevel(DiaryRoute.Calendar) },
                 onOpenSearch = { navController.navigateTopLevel(DiaryRoute.Search) },
+                onOpenSettings = { navController.navigateTopLevel(DiaryRoute.Settings) },
                 onOpenEntry = { navController.navigate(DiaryRoute.detailEntry(it)) },
                 bottomBar = bottomBar,
             )
@@ -72,25 +72,14 @@ fun DiaryNavGraph(viewModel: DiaryViewModel) {
         composable(DiaryRoute.Calendar) {
             CalendarScreen(
                 viewModel = viewModel,
-                onAddForDate = { navController.navigate(DiaryRoute.addEntry(it)) },
                 onOpenEntry = { navController.navigate(DiaryRoute.detailEntry(it)) },
                 bottomBar = bottomBar,
             )
         }
-        composable(
-            route = DiaryRoute.AddEntry,
-            arguments = listOf(
-                navArgument("entryDateEpochDay") {
-                    type = NavType.LongType
-                    defaultValue = Long.MIN_VALUE
-                },
-            ),
-        ) { backStackEntry ->
-            val rawDate = backStackEntry.arguments?.getLong("entryDateEpochDay") ?: Long.MIN_VALUE
+        composable(DiaryRoute.AddEntry) {
             EditorScreen(
                 viewModel = viewModel,
                 entryId = null,
-                initialDateEpochDay = rawDate.takeIf { it != Long.MIN_VALUE },
                 onBack = { navController.popBackStack() },
                 onSaved = { entryId ->
                     navController.navigate(DiaryRoute.detailEntry(entryId)) {
@@ -107,7 +96,6 @@ fun DiaryNavGraph(viewModel: DiaryViewModel) {
             EditorScreen(
                 viewModel = viewModel,
                 entryId = entryId,
-                initialDateEpochDay = null,
                 onBack = { navController.popBackStack() },
                 onSaved = { navController.popBackStack() },
             )
@@ -146,7 +134,10 @@ private fun DiaryBottomBar(
     currentRoute: String?,
     onNavigate: (String) -> Unit,
 ) {
-    NavigationBar {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 0.dp,
+    ) {
         topLevelDestinations.forEach { destination ->
             val label = stringResource(destination.labelRes)
             NavigationBarItem(
@@ -184,9 +175,7 @@ private data class TopLevelDestination(
 )
 
 private val topLevelDestinations = listOf(
+    TopLevelDestination(DiaryRoute.Calendar, R.string.calendar_bottom_nav, Icons.Default.CalendarMonth),
     TopLevelDestination(DiaryRoute.Home, R.string.home_bottom_nav, Icons.Default.Home),
     TopLevelDestination(DiaryRoute.Entries, R.string.entries_bottom_nav, Icons.AutoMirrored.Filled.List),
-    TopLevelDestination(DiaryRoute.Calendar, R.string.calendar_bottom_nav, Icons.Default.CalendarMonth),
-    TopLevelDestination(DiaryRoute.Search, R.string.search_bottom_nav, Icons.Default.Search),
-    TopLevelDestination(DiaryRoute.Settings, R.string.settings_bottom_nav, Icons.Default.Settings),
 )

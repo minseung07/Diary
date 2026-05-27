@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
@@ -50,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.diarylite.app.R
@@ -60,11 +60,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.nio.charset.StandardCharsets
+import java.time.LocalDate
+import java.time.YearMonth
 
 @Composable
 fun CalendarScreen(
     viewModel: DiaryViewModel,
-    onAddForDate: (Long) -> Unit,
     onOpenEntry: (Long) -> Unit,
     bottomBar: @Composable () -> Unit = {},
 ) {
@@ -73,6 +74,7 @@ fun CalendarScreen(
     val dateCounts by viewModel.monthEntryCounts.collectAsStateWithLifecycle()
     val selectedEntries by viewModel.selectedDateEntries.collectAsStateWithLifecycle()
     val datesWithEntries = remember(dateCounts) { dateCounts.map { it.entryDateEpochDay }.toSet() }
+    val monthEntryCount = remember(dateCounts) { dateCounts.sumOf { it.count } }
     val weekdays = stringArrayResource(R.array.calendar_weekdays).toList()
     val calendarDates = remember(visibleMonth) { visibleMonth.calendarGridDates() }
 
@@ -96,71 +98,26 @@ fun CalendarScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 14.dp),
+            contentPadding = PaddingValues(start = 16.dp, top = 14.dp, end = 16.dp, bottom = 20.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = MaterialTheme.shapes.medium,
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                ) {
-                    Column(
-                        modifier = Modifier.padding(14.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-                        MonthHeader(
-                            visibleMonth = visibleMonth,
-                            onPrevious = viewModel::previousMonth,
-                            onNext = viewModel::nextMonth,
-                        )
-                        Row(Modifier.fillMaxWidth()) {
-                            weekdays.forEach { label ->
-                                Text(
-                                    text = label,
-                                    modifier = Modifier.weight(1f),
-                                    style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    fontWeight = FontWeight.SemiBold,
-                                )
-                            }
-                        }
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(2.dp),
-                        ) {
-                            calendarDates.chunked(7).forEach { weekDates ->
-                                Row(Modifier.fillMaxWidth()) {
-                                    weekDates.forEach { date ->
-                                        CalendarDayCell(
-                                            date = date,
-                                            visibleMonth = visibleMonth,
-                                            selectedDate = selectedDate,
-                                            hasEntry = date.toEpochDay() in datesWithEntries,
-                                            onClick = { viewModel.selectDate(date) },
-                                            modifier = Modifier.weight(1f),
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                DiaryCalendarPanel(
+                    visibleMonth = visibleMonth,
+                    monthEntryCount = monthEntryCount,
+                    weekdays = weekdays,
+                    calendarDates = calendarDates,
+                    selectedDate = selectedDate,
+                    datesWithEntries = datesWithEntries,
+                    onPreviousMonth = viewModel::previousMonth,
+                    onNextMonth = viewModel::nextMonth,
+                    onSelectDate = viewModel::selectDate,
+                )
             }
             item {
-                Button(
-                    onClick = { onAddForDate(selectedDate.toEpochDay()) },
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text(stringResource(R.string.write_selected_date))
-                }
-            }
-            item {
-                SectionHeader(
-                    title = fullKoreanDateText(selectedDate),
+                SelectedDateSummary(
+                    selectedDate = selectedDate,
+                    entryCount = selectedEntries.size,
                 )
             }
             if (selectedEntries.isEmpty()) {
@@ -170,6 +127,119 @@ fun CalendarScreen(
                     EntryCard(entry = entry, onClick = { onOpenEntry(entry.id) })
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DiaryCalendarPanel(
+    visibleMonth: YearMonth,
+    monthEntryCount: Int,
+    weekdays: List<String>,
+    calendarDates: List<LocalDate>,
+    selectedDate: LocalDate,
+    datesWithEntries: Set<Long>,
+    onPreviousMonth: () -> Unit,
+    onNextMonth: () -> Unit,
+    onSelectDate: (LocalDate) -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.surface,
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            MonthHeader(
+                visibleMonth = visibleMonth,
+                onPrevious = onPreviousMonth,
+                onNext = onNextMonth,
+            )
+            Surface(
+                color = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                shape = MaterialTheme.shapes.small,
+            ) {
+                Text(
+                    text = stringResource(R.string.entry_count_format, monthEntryCount),
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
+            Row(Modifier.fillMaxWidth()) {
+                weekdays.forEach { label ->
+                    Text(
+                        text = label,
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(3.dp),
+            ) {
+                calendarDates.chunked(7).forEach { weekDates ->
+                    Row(Modifier.fillMaxWidth()) {
+                        weekDates.forEach { date ->
+                            CalendarDayCell(
+                                date = date,
+                                visibleMonth = visibleMonth,
+                                selectedDate = selectedDate,
+                                hasEntry = date.toEpochDay() in datesWithEntries,
+                                onClick = { onSelectDate(date) },
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SelectedDateSummary(
+    selectedDate: LocalDate,
+    entryCount: Int,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = fullKoreanDateText(selectedDate),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Text(
+                text = stringResource(R.string.selected_date_entries),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Surface(
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+            shape = MaterialTheme.shapes.small,
+        ) {
+            Text(
+                text = stringResource(R.string.entry_count_format, entryCount),
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                style = MaterialTheme.typography.labelLarge,
+            )
         }
     }
 }

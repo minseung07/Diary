@@ -3,11 +3,11 @@
     <string name="app_name">Diary Lite</string>
     <string name="home_title">Diary Lite</string>
     <string name="today_diary">오늘 일기 쓰기</string>
-    <string name="home_today_card_title">오늘의 기록을 남겨보세요</string>
-    <string name="home_today_card_subtitle">짧게 적어도 괜찮습니다. 지금 떠오른 생각을 바로 저장하세요.</string>
+    <string name="write_diary_short">일기 쓰기</string>
     <string name="recent_entries">최근 일기</string>
     <string name="view_all">전체 보기</string>
     <string name="all_entries">전체 일기</string>
+    <string name="diary_records">일기 기록</string>
     <string name="calendar">달력</string>
     <string name="search">검색</string>
     <string name="settings">설정</string>
@@ -69,7 +69,6 @@
     <string name="markdown_export">Markdown 내보내기</string>
     <string name="export_all_entries">모든 일기 내보내기</string>
     <string name="export_description">기기에 저장된 모든 일기를 Markdown 파일로 저장합니다.</string>
-    <string name="write_selected_date">선택한 날짜에 쓰기</string>
     <string name="export_title">Diary Lite 내보내기</string>
     <string name="exported_at_label">내보낸 시각</string>
     <string name="export_time_label">시간</string>
@@ -83,8 +82,9 @@
     <string name="editor_writing_section">일기 내용</string>
     <string name="editor_mood_section">기분</string>
     <string name="search_results_count">검색 결과 %1$d개</string>
+    <string name="selected_date_entries">선택한 날짜의 일기</string>
     <string name="home_bottom_nav">홈</string>
-    <string name="entries_bottom_nav">일기</string>
+    <string name="entries_bottom_nav">기록</string>
     <string name="calendar_bottom_nav">달력</string>
     <string name="search_bottom_nav">검색</string>
     <string name="settings_bottom_nav">설정</string>

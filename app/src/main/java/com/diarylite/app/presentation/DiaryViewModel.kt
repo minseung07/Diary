@@ -136,16 +136,13 @@ class DiaryViewModel(
     suspend fun saveNewEntry(
         title: String?,
         content: String,
-        date: LocalDate,
-        entryTimeMinute: Int?,
-        moodCode: String?,
     ): EditorResult = runCatching {
         val id = repository.createEntry(
             title = title,
             content = content,
-            entryDateEpochDay = date.toEpochDay(),
-            entryTimeMinute = entryTimeMinute,
-            moodCode = moodCode,
+            entryDateEpochDay = LocalDate.now().toEpochDay(),
+            entryTimeMinute = null,
+            moodCode = null,
         )
         EditorResult(success = true, entryId = id)
     }.getOrElse {
@@ -156,18 +153,14 @@ class DiaryViewModel(
         entryId: Long,
         title: String?,
         content: String,
-        date: LocalDate,
-        entryTimeMinute: Int?,
-        moodCode: String?,
     ): EditorResult {
         val existing = repository.getEntry(entryId) ?: return EditorResult(success = false)
         return runCatching {
             val updated = existing.copy(
                 title = title,
                 content = content,
-                entryDateEpochDay = date.toEpochDay(),
-                entryTimeMinute = entryTimeMinute,
-                moodCode = moodCode,
+                entryTimeMinute = null,
+                moodCode = null,
             )
             EditorResult(success = repository.updateEntry(updated), entryId = entryId)
         }.getOrElse {
